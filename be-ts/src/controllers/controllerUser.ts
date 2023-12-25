@@ -37,7 +37,7 @@ const createUser = async (req: Request, res: Response) => {
 			no_hp: no_hp,
 			status: false,
 		});
-		return res.status(200).json(newUser);
+		return res.status(200).json({ message: "User created" });
 	} catch (error) {
 		console.log(error);
 		return res.status(500).json({ message: "Something went wrong" });

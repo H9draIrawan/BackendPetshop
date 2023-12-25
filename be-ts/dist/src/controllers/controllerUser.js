@@ -45,7 +45,7 @@ const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             no_hp: no_hp,
             status: false,
         });
-        return res.status(200).json(newUser);
+        return res.status(200).json({ message: "User created" });
     }
     catch (error) {
         console.log(error);

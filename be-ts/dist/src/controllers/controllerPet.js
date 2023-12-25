@@ -124,17 +124,16 @@ const getPetbyUserId = (req, res) => __awaiter(void 0, void 0, void 0, function*
 });
 const createPet = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { profile, nama, umur, jenis, ras } = req.body;
-        const { id } = req.params;
+        const { id_user, profile, nama, umur, jenis, ras } = req.body;
         const newPet = Pet.create({
-            id_user: id,
+            id_user: id_user,
             profile: profile,
             nama: nama,
             umur: umur,
             jenis: jenis,
             ras: ras,
         });
-        return res.status(200).json(newPet);
+        return res.status(200).json({ message: "Pet created" });
     }
     catch (error) {
         console.log(error);
