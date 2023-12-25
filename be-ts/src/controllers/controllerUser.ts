@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 const User = require("../models/modelUser");
 
-// Get all users
 const getAllUsers = async (req: Request, res: Response) => {
 	try {
 		const users = await User.find();
