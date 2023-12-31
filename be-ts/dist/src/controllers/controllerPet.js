@@ -145,11 +145,24 @@ const updatePet = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const { nama, umur, jenis, ras } = req.body;
         const { id } = req.params;
         const newPet = yield Pet.findByIdAndUpdate(id, {
-            profile: req.file.filename,
             nama: nama,
             umur: umur,
             jenis: jenis,
             ras: ras,
+        }, { new: true });
+        return res.status(200).json(newPet);
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Something went wrong" });
+    }
+});
+const updateProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const profile = req.file.filename;
+        const newPet = yield Pet.findByIdAndUpdate(id, {
+            profile: profile,
         }, { new: true });
         return res.status(200).json(newPet);
     }
@@ -175,5 +188,6 @@ module.exports = {
     getPetbyUserId,
     createPet,
     updatePet,
+    updateProfile,
     deletePet,
 };

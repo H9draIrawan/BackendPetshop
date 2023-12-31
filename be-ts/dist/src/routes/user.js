@@ -26,6 +26,7 @@ router.post("/token", controller.createToken);
 router.post("/verify", controller.verifyUser);
 router.put("/banned/:id", controller.bannedUser);
 router.put("/unbanned/:id", controller.unbannedUser);
-router.put("/:id", upload.single("profile"), controller.updateUser);
+router.put("/:id", controller.updateUser);
+router.put("/profile/:id", upload.single("profile"), controller.updateProfile);
 router.delete("/:id", controller.deleteUser);
 module.exports = router;

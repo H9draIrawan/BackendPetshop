@@ -129,7 +129,6 @@ const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                 username: username,
                 email: email,
                 password: bcrypt.hashSync(password, 10),
-                profile: req.file.filename,
                 alamat: alamat,
                 kota: kota,
                 no_hp: no_hp,
@@ -141,13 +140,26 @@ const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                 nama: nama,
                 username: username,
                 email: email,
-                profile: req.file.filename,
                 alamat: alamat,
                 kota: kota,
                 no_hp: no_hp,
             }, { new: true });
             return res.status(200).json(newUser);
         }
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Something went wrong" });
+    }
+});
+const updateProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const profile = req.file.filename;
+        const newUser = yield User.findByIdAndUpdate(id, {
+            profile: profile,
+        }, { new: true });
+        return res.status(200).json(newUser);
     }
     catch (error) {
         console.log(error);
@@ -206,5 +218,6 @@ module.exports = {
     bannedUser,
     unbannedUser,
     updateUser,
+    updateProfile,
     deleteUser,
 };

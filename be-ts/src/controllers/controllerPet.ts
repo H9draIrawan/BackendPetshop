@@ -136,7 +136,6 @@ const updatePet = async (req: any, res: Response) => {
 		const newPet = await Pet.findByIdAndUpdate(
 			id,
 			{
-				profile: req.file.filename,
 				nama: nama,
 				umur: umur,
 				jenis: jenis,
@@ -151,6 +150,24 @@ const updatePet = async (req: any, res: Response) => {
 		return res.status(500).json({ message: "Something went wrong" });
 	}
 };
+
+const updateProfile = async (req: any, res: Response) => {
+	try {
+		const { id } = req.params;
+		const profile = req.file.filename;
+		const newPet = await Pet.findByIdAndUpdate(
+			id,
+			{
+				profile: profile,
+			},
+			{ new: true },
+		);
+		return res.status(200).json(newPet);
+	} catch (error) {
+		console.log(error);
+		return res.status(500).json({ message: "Something went wrong" });
+	}
+}
 
 const deletePet = async (req: Request, res: Response) => {
 	try {
@@ -169,5 +186,6 @@ module.exports = {
 	getPetbyUserId,
 	createPet,
 	updatePet,
+	updateProfile,
 	deletePet,
 };

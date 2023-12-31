@@ -129,7 +129,6 @@ const updateUser = async (req: any, res: Response) => {
 					username: username,
 					email: email,
 					password: bcrypt.hashSync(password, 10),
-					profile: req.file.filename,
 					alamat: alamat,
 					kota: kota,
 					no_hp: no_hp,
@@ -144,7 +143,6 @@ const updateUser = async (req: any, res: Response) => {
 					nama: nama,
 					username: username,
 					email: email,
-					profile: req.file.filename,
 					alamat: alamat,
 					kota: kota,
 					no_hp: no_hp,
@@ -153,6 +151,24 @@ const updateUser = async (req: any, res: Response) => {
 			);
 			return res.status(200).json(newUser);
 		}
+	} catch (error) {
+		console.log(error);
+		return res.status(500).json({ message: "Something went wrong" });
+	}
+};
+
+const updateProfile = async (req: any, res: Response) => {
+	try {
+		const { id } = req.params;
+		const profile = req.file.filename;
+		const newUser = await User.findByIdAndUpdate(
+			id,
+			{
+				profile: profile,
+			},
+			{ new: true },
+		);
+		return res.status(200).json(newUser);
 	} catch (error) {
 		console.log(error);
 		return res.status(500).json({ message: "Something went wrong" });
@@ -218,5 +234,6 @@ module.exports = {
 	bannedUser,
 	unbannedUser,
 	updateUser,
+	updateProfile,
 	deleteUser,
 };

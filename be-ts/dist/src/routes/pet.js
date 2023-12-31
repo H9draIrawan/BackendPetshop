@@ -22,6 +22,7 @@ router.get("/", controller.getAllPets);
 router.get("/:id", controller.getPetbyId);
 router.get("/user/:id", controller.getPetbyUserId);
 router.post("/", upload.single("profile"), controller.createPet);
-router.put("/:id", upload.single("profile"), controller.updatePet);
+router.put("/:id", controller.updatePet);
+router.put("/profile/:id", upload.single("profile"), controller.updateProfile);
 router.delete("/:id", controller.deletePet);
 module.exports = router;
