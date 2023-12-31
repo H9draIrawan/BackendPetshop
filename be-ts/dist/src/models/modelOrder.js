@@ -18,9 +18,9 @@ const orderSchema = new mongoose_1.default.Schema({
             },
             kategori: String,
             harga: Number,
-            tanggal: Date,
         },
     ],
+    tanggal: Date,
     status: Boolean,
 });
 const Order = mongoose_1.default.model("Order", orderSchema, "orders");

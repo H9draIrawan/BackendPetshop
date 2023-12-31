@@ -38,6 +38,7 @@ const getAllOrders = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                     _id: 1,
                     status: 1,
                     details: 1,
+                    tanggal: 1,
                     pets: 1,
                     user: {
                         $arrayElemAt: ["$user", 0],
@@ -83,6 +84,7 @@ const getOrderbyId = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                     _id: 1,
                     status: 1,
                     details: 1,
+                    tanggal: 1,
                     pets: 1,
                     user: {
                         $arrayElemAt: ["$user", 0],
@@ -128,6 +130,7 @@ const getOrderbyUserId = (req, res) => __awaiter(void 0, void 0, void 0, functio
                     _id: 1,
                     status: 1,
                     details: 1,
+                    tanggal: 1,
                     pets: 1,
                     user: {
                         $arrayElemAt: ["$user", 0],
@@ -145,11 +148,11 @@ const getOrderbyUserId = (req, res) => __awaiter(void 0, void 0, void 0, functio
 });
 const createOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { id_user, details, total } = req.body;
+        const { id_user, details, tanggal } = req.body;
         Order.create({
             id_user: id_user,
             details: details,
-            total: total,
+            tanggal: tanggal,
             status: false,
         });
         return res.status(200).json({ message: "Order created" });
@@ -161,10 +164,11 @@ const createOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 });
 const updateOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { details } = req.body;
+        const { details, tanggal } = req.body;
         const { id } = req.params;
         const newOrder = yield Order.findByIdAndUpdate(id, {
             details: details,
+            tanggal: tanggal,
         }, { new: true });
         return res.status(200).json(newOrder);
     }

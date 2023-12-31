@@ -48,7 +48,7 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (!isMatch) {
             return res.status(400).json({ message: "Wrong password" });
         }
-        if (!user.status) {
+        if (user.status == "nonactive") {
             return res.status(400).json({ message: "User not verified" });
         }
         return res.status(200).json({ message: "Login successful" });
@@ -70,7 +70,7 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             alamat: alamat,
             kota: kota,
             no_hp: no_hp,
-            status: false,
+            status: "nonactive",
         });
         const token = jwt.sign({
             email: email,
@@ -89,8 +89,19 @@ const verifyUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     const { token } = req.body;
     try {
         const user = jwt.verify(token, process.env.SECRET_KEY);
-        yield User.findOneAndUpdate({ email: user.email }, { status: true });
+        yield User.findOneAndUpdate({ email: user.email }, { status: "active" });
         return res.status(200).json({ message: "User verified" });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Something went wrong" });
+    }
+});
+const bannedUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        yield User.findByIdAndUpdate(id, { status: "banned" });
+        return res.status(200).json({ message: "User banned" });
     }
     catch (error) {
         console.log(error);
@@ -181,6 +192,7 @@ module.exports = {
     registerUser,
     createToken,
     verifyUser,
+    bannedUser,
     updateUser,
     deleteUser,
 };
