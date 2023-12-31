@@ -16,23 +16,21 @@ const getAllOrders = async (req: Request, res: Response) => {
 			{
 				$lookup: {
 					from: "pets",
-					localField: "id_pet",
+					localField: "details.id_pet",
 					foreignField: "_id",
-					as: "pet",
+					as: "pets",
 				},
 			},
 			{
 				$project: {
 					_id: 1,
-					kategori: 1,
-                    harga: 1,
-                    tanggal: 1,
+					status: 1,
+					details: 1,
+					pets: 1,
 					user: {
 						$arrayElemAt: ["$user", 0],
 					},
-					pet: {
-						$arrayElemAt: ["$pet", 0],
-					},
+					total: { $sum: "$details.harga" },
 				},
 			},
 		]);
@@ -48,6 +46,11 @@ const getOrderbyId = async (req: Request, res: Response) => {
 		const { id } = req.params;
 		const order = await Order.aggregate([
 			{
+				$match: {
+					_id: new mongoose.Types.ObjectId(id),
+				},
+			},
+			{
 				$lookup: {
 					from: "users",
 					localField: "id_user",
@@ -58,28 +61,21 @@ const getOrderbyId = async (req: Request, res: Response) => {
 			{
 				$lookup: {
 					from: "pets",
-					localField: "id_pet",
+					localField: "details.id_pet",
 					foreignField: "_id",
-					as: "pet",
-				},
-			},
-			{
-				$match: {
-					_id: new mongoose.Types.ObjectId(id),
+					as: "pets",
 				},
 			},
 			{
 				$project: {
 					_id: 1,
-					kategori: 1,
-                    harga: 1,
-                    tanggal: 1,
+					status: 1,
+					details: 1,
+					pets: 1,
 					user: {
 						$arrayElemAt: ["$user", 0],
 					},
-					pet: {
-						$arrayElemAt: ["$pet", 0],
-					},
+					total: { $sum: "$details.harga" },
 				},
 			},
 		]);
@@ -95,6 +91,11 @@ const getOrderbyUserId = async (req: Request, res: Response) => {
 		const { id } = req.params;
 		const order = await Order.aggregate([
 			{
+				$match: {
+					id_user: new mongoose.Types.ObjectId(id),
+				},
+			},
+			{
 				$lookup: {
 					from: "users",
 					localField: "id_user",
@@ -105,28 +106,21 @@ const getOrderbyUserId = async (req: Request, res: Response) => {
 			{
 				$lookup: {
 					from: "pets",
-					localField: "id_pet",
+					localField: "details.id_pet",
 					foreignField: "_id",
-					as: "pet",
-				},
-			},
-			{
-				$match: {
-					id_user: new mongoose.Types.ObjectId(id),
+					as: "pets",
 				},
 			},
 			{
 				$project: {
 					_id: 1,
-					kategori: 1,
-                    harga: 1,
-                    tanggal: 1,
+					status: 1,
+					details: 1,
+					pets: 1,
 					user: {
 						$arrayElemAt: ["$user", 0],
 					},
-					pet: {
-						$arrayElemAt: ["$pet", 0],
-					},
+					total: { $sum: "$details.harga" },
 				},
 			},
 		]);
@@ -139,13 +133,12 @@ const getOrderbyUserId = async (req: Request, res: Response) => {
 
 const createOrder = async (req: Request, res: Response) => {
 	try {
-		const { id_user, id_pet, kategori, harga, tanggal } = req.body;
-		const newOrder = Order.create({
+		const { id_user, details, total } = req.body;
+		Order.create({
 			id_user: id_user,
-			id_pet: id_pet,
-			kategori: kategori,
-			harga: harga,
-			tanggal: tanggal,
+			details: details,
+			total: total,
+			status: false,
 		});
 		return res.status(200).json({ message: "Order created" });
 	} catch (error) {
@@ -156,15 +149,31 @@ const createOrder = async (req: Request, res: Response) => {
 
 const updateOrder = async (req: Request, res: Response) => {
 	try {
-		const { kategori, harga, tanggal } = req.body;
+		const { details } = req.body;
 		const { id } = req.params;
 
 		const newOrder = await Order.findByIdAndUpdate(
 			id,
 			{
-				kategori: kategori,
-				harga: harga,
-				tanggal: tanggal,
+				details: details,
+			},
+			{ new: true },
+		);
+
+		return res.status(200).json(newOrder);
+	} catch (error) {
+		console.log(error);
+		return res.status(500).json({ message: "Something went wrong" });
+	}
+};
+
+const finishOrder = async (req: Request, res: Response) => {
+	try {
+		const { id } = req.params;
+		const newOrder = await Order.findByIdAndUpdate(
+			id,
+			{
+				status: true,
 			},
 			{ new: true },
 		);
@@ -193,5 +202,6 @@ module.exports = {
 	getOrderbyUserId,
 	createOrder,
 	updateOrder,
+	finishOrder,
 	deleteOrder,
 };

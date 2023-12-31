@@ -5,9 +5,9 @@ const reviewSchema = new mongoose.Schema({
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "users",
 	},
-	id_order : {
+	id_order: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: "orders"
+		ref: "orders",
 	},
 	rating: Number,
 	kritik: String,

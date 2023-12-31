@@ -28,23 +28,21 @@ const getAllOrders = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             {
                 $lookup: {
                     from: "pets",
-                    localField: "id_pet",
+                    localField: "details.id_pet",
                     foreignField: "_id",
-                    as: "pet",
+                    as: "pets",
                 },
             },
             {
                 $project: {
                     _id: 1,
-                    kategori: 1,
-                    harga: 1,
-                    tanggal: 1,
+                    status: 1,
+                    details: 1,
+                    pets: 1,
                     user: {
                         $arrayElemAt: ["$user", 0],
                     },
-                    pet: {
-                        $arrayElemAt: ["$pet", 0],
-                    },
+                    total: { $sum: "$details.harga" },
                 },
             },
         ]);
@@ -60,6 +58,11 @@ const getOrderbyId = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         const { id } = req.params;
         const order = yield Order.aggregate([
             {
+                $match: {
+                    _id: new mongoose_1.default.Types.ObjectId(id),
+                },
+            },
+            {
                 $lookup: {
                     from: "users",
                     localField: "id_user",
@@ -70,28 +73,21 @@ const getOrderbyId = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             {
                 $lookup: {
                     from: "pets",
-                    localField: "id_pet",
+                    localField: "details.id_pet",
                     foreignField: "_id",
-                    as: "pet",
-                },
-            },
-            {
-                $match: {
-                    _id: new mongoose_1.default.Types.ObjectId(id),
+                    as: "pets",
                 },
             },
             {
                 $project: {
                     _id: 1,
-                    kategori: 1,
-                    harga: 1,
-                    tanggal: 1,
+                    status: 1,
+                    details: 1,
+                    pets: 1,
                     user: {
                         $arrayElemAt: ["$user", 0],
                     },
-                    pet: {
-                        $arrayElemAt: ["$pet", 0],
-                    },
+                    total: { $sum: "$details.harga" },
                 },
             },
         ]);
@@ -107,6 +103,11 @@ const getOrderbyUserId = (req, res) => __awaiter(void 0, void 0, void 0, functio
         const { id } = req.params;
         const order = yield Order.aggregate([
             {
+                $match: {
+                    id_user: new mongoose_1.default.Types.ObjectId(id),
+                },
+            },
+            {
                 $lookup: {
                     from: "users",
                     localField: "id_user",
@@ -117,28 +118,21 @@ const getOrderbyUserId = (req, res) => __awaiter(void 0, void 0, void 0, functio
             {
                 $lookup: {
                     from: "pets",
-                    localField: "id_pet",
+                    localField: "details.id_pet",
                     foreignField: "_id",
-                    as: "pet",
-                },
-            },
-            {
-                $match: {
-                    id_user: new mongoose_1.default.Types.ObjectId(id),
+                    as: "pets",
                 },
             },
             {
                 $project: {
                     _id: 1,
-                    kategori: 1,
-                    harga: 1,
-                    tanggal: 1,
+                    status: 1,
+                    details: 1,
+                    pets: 1,
                     user: {
                         $arrayElemAt: ["$user", 0],
                     },
-                    pet: {
-                        $arrayElemAt: ["$pet", 0],
-                    },
+                    total: { $sum: "$details.harga" },
                 },
             },
         ]);
@@ -151,13 +145,12 @@ const getOrderbyUserId = (req, res) => __awaiter(void 0, void 0, void 0, functio
 });
 const createOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { id_user, id_pet, kategori, harga, tanggal } = req.body;
-        const newOrder = Order.create({
+        const { id_user, details, total } = req.body;
+        Order.create({
             id_user: id_user,
-            id_pet: id_pet,
-            kategori: kategori,
-            harga: harga,
-            tanggal: tanggal,
+            details: details,
+            total: total,
+            status: false,
         });
         return res.status(200).json({ message: "Order created" });
     }
@@ -168,12 +161,23 @@ const createOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 });
 const updateOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { kategori, harga, tanggal } = req.body;
+        const { details } = req.body;
         const { id } = req.params;
         const newOrder = yield Order.findByIdAndUpdate(id, {
-            kategori: kategori,
-            harga: harga,
-            tanggal: tanggal,
+            details: details,
+        }, { new: true });
+        return res.status(200).json(newOrder);
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Something went wrong" });
+    }
+});
+const finishOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const newOrder = yield Order.findByIdAndUpdate(id, {
+            status: true,
         }, { new: true });
         return res.status(200).json(newOrder);
     }
@@ -199,5 +203,6 @@ module.exports = {
     getOrderbyUserId,
     createOrder,
     updateOrder,
+    finishOrder,
     deleteOrder,
 };

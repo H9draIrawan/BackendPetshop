@@ -5,13 +5,19 @@ const orderSchema = new mongoose.Schema({
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "users",
 	},
-    id_pet: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "pets",
-    },
-	kategori: String,
-    harga : Number,
-    tanggal : Date
+	details: [
+		{
+			_id: false,
+			id_pet: {
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "pets",
+			},
+			kategori: String,
+			harga: Number,
+			tanggal: Date,
+		},
+	],
+	status: Boolean,
 });
 
 const Order = mongoose.model("Order", orderSchema, "orders");

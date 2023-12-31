@@ -11,7 +11,7 @@ const reviewSchema = new mongoose_1.default.Schema({
     },
     id_order: {
         type: mongoose_1.default.Schema.Types.ObjectId,
-        ref: "orders"
+        ref: "orders",
     },
     rating: Number,
     kritik: String,

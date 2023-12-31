@@ -39,16 +39,16 @@ const getPetbyId = async (req: Request, res: Response) => {
 		const { id } = req.params;
 		const pet = await Pet.aggregate([
 			{
+				$match: {
+					_id: new mongoose.Types.ObjectId(id),
+				},
+			},
+			{
 				$lookup: {
 					from: "users",
 					localField: "id_user",
 					foreignField: "_id",
 					as: "user",
-				},
-			},
-			{
-				$match: {
-					_id: new mongoose.Types.ObjectId(id),
 				},
 			},
 			{
@@ -77,16 +77,16 @@ const getPetbyUserId = async (req: Request, res: Response) => {
 		const { id } = req.params;
 		const pet = await Pet.aggregate([
 			{
+				$match: {
+					id_user: new mongoose.Types.ObjectId(id),
+				},
+			},
+			{
 				$lookup: {
 					from: "users",
 					localField: "id_user",
 					foreignField: "_id",
 					as: "user",
-				},
-			},
-			{
-				$match: {
-					id_user: new mongoose.Types.ObjectId(id),
 				},
 			},
 			{
@@ -110,12 +110,12 @@ const getPetbyUserId = async (req: Request, res: Response) => {
 	}
 };
 
-const createPet = async (req: Request, res: Response) => {
+const createPet = async (req: any, res: Response) => {
 	try {
-		const { id_user, profile, nama, umur, jenis, ras } = req.body;
-		const newPet = Pet.create({
+		const { id_user, nama, umur, jenis, ras } = req.body;
+		Pet.create({
 			id_user: id_user,
-			profile: profile,
+			profile: req.file.filename,
 			nama: nama,
 			umur: umur,
 			jenis: jenis,
@@ -128,15 +128,15 @@ const createPet = async (req: Request, res: Response) => {
 	}
 };
 
-const updatePet = async (req: Request, res: Response) => {
+const updatePet = async (req: any, res: Response) => {
 	try {
-		const { profile, nama, umur, jenis, ras } = req.body;
+		const { nama, umur, jenis, ras } = req.body;
 		const { id } = req.params;
 
 		const newPet = await Pet.findByIdAndUpdate(
 			id,
 			{
-				profile: profile,
+				profile: req.file.filename,
 				nama: nama,
 				umur: umur,
 				jenis: jenis,

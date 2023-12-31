@@ -48,6 +48,11 @@ const getReviewbyId = async (req: Request, res: Response) => {
 		const { id } = req.params;
 		const review = await Review.aggregate([
 			{
+				$match: {
+					_id: new mongoose.Types.ObjectId(id),
+				},
+			},
+			{
 				$lookup: {
 					from: "users",
 					localField: "id_user",
@@ -61,11 +66,6 @@ const getReviewbyId = async (req: Request, res: Response) => {
 					localField: "id_order",
 					foreignField: "_id",
 					as: "order",
-				},
-			},
-			{
-				$match: {
-					_id: new mongoose.Types.ObjectId(id),
 				},
 			},
 			{
@@ -95,6 +95,11 @@ const getReviewbyUserId = async (req: Request, res: Response) => {
 		const { id } = req.params;
 		const review = await Review.aggregate([
 			{
+				$match: {
+					id_user: new mongoose.Types.ObjectId(id),
+				},
+			},
+			{
 				$lookup: {
 					from: "users",
 					localField: "id_user",
@@ -108,11 +113,6 @@ const getReviewbyUserId = async (req: Request, res: Response) => {
 					localField: "id_order",
 					foreignField: "_id",
 					as: "order",
-				},
-			},
-			{
-				$match: {
-					id_user: new mongoose.Types.ObjectId(id),
 				},
 			},
 			{
@@ -140,7 +140,7 @@ const getReviewbyUserId = async (req: Request, res: Response) => {
 const createReview = async (req: Request, res: Response) => {
 	try {
 		const { id_user, id_order, rating, kritik, saran } = req.body;
-		const newReview = Review.create({
+		Review.create({
 			id_user: id_user,
 			id_order: id_order,
 			rating: rating,

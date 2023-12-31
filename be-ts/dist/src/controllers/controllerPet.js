@@ -51,16 +51,16 @@ const getPetbyId = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const { id } = req.params;
         const pet = yield Pet.aggregate([
             {
+                $match: {
+                    _id: new mongoose_1.default.Types.ObjectId(id),
+                },
+            },
+            {
                 $lookup: {
                     from: "users",
                     localField: "id_user",
                     foreignField: "_id",
                     as: "user",
-                },
-            },
-            {
-                $match: {
-                    _id: new mongoose_1.default.Types.ObjectId(id),
                 },
             },
             {
@@ -89,16 +89,16 @@ const getPetbyUserId = (req, res) => __awaiter(void 0, void 0, void 0, function*
         const { id } = req.params;
         const pet = yield Pet.aggregate([
             {
+                $match: {
+                    id_user: new mongoose_1.default.Types.ObjectId(id),
+                },
+            },
+            {
                 $lookup: {
                     from: "users",
                     localField: "id_user",
                     foreignField: "_id",
                     as: "user",
-                },
-            },
-            {
-                $match: {
-                    id_user: new mongoose_1.default.Types.ObjectId(id),
                 },
             },
             {
@@ -124,10 +124,10 @@ const getPetbyUserId = (req, res) => __awaiter(void 0, void 0, void 0, function*
 });
 const createPet = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { id_user, profile, nama, umur, jenis, ras } = req.body;
-        const newPet = Pet.create({
+        const { id_user, nama, umur, jenis, ras } = req.body;
+        Pet.create({
             id_user: id_user,
-            profile: profile,
+            profile: req.file.filename,
             nama: nama,
             umur: umur,
             jenis: jenis,
@@ -142,10 +142,10 @@ const createPet = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const updatePet = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { profile, nama, umur, jenis, ras } = req.body;
+        const { nama, umur, jenis, ras } = req.body;
         const { id } = req.params;
         const newPet = yield Pet.findByIdAndUpdate(id, {
-            profile: profile,
+            profile: req.file.filename,
             nama: nama,
             umur: umur,
             jenis: jenis,

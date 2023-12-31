@@ -9,13 +9,19 @@ const orderSchema = new mongoose_1.default.Schema({
         type: mongoose_1.default.Schema.Types.ObjectId,
         ref: "users",
     },
-    id_pet: {
-        type: mongoose_1.default.Schema.Types.ObjectId,
-        ref: "pets",
-    },
-    kategori: String,
-    harga: Number,
-    tanggal: Date
+    details: [
+        {
+            _id: false,
+            id_pet: {
+                type: mongoose_1.default.Schema.Types.ObjectId,
+                ref: "pets",
+            },
+            kategori: String,
+            harga: Number,
+            tanggal: Date,
+        },
+    ],
+    status: Boolean,
 });
 const Order = mongoose_1.default.model("Order", orderSchema, "orders");
 module.exports = Order;

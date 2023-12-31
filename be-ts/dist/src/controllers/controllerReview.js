@@ -60,6 +60,11 @@ const getReviewbyId = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         const { id } = req.params;
         const review = yield Review.aggregate([
             {
+                $match: {
+                    _id: new mongoose_1.default.Types.ObjectId(id),
+                },
+            },
+            {
                 $lookup: {
                     from: "users",
                     localField: "id_user",
@@ -73,11 +78,6 @@ const getReviewbyId = (req, res) => __awaiter(void 0, void 0, void 0, function* 
                     localField: "id_order",
                     foreignField: "_id",
                     as: "order",
-                },
-            },
-            {
-                $match: {
-                    _id: new mongoose_1.default.Types.ObjectId(id),
                 },
             },
             {
@@ -107,6 +107,11 @@ const getReviewbyUserId = (req, res) => __awaiter(void 0, void 0, void 0, functi
         const { id } = req.params;
         const review = yield Review.aggregate([
             {
+                $match: {
+                    id_user: new mongoose_1.default.Types.ObjectId(id),
+                },
+            },
+            {
                 $lookup: {
                     from: "users",
                     localField: "id_user",
@@ -120,11 +125,6 @@ const getReviewbyUserId = (req, res) => __awaiter(void 0, void 0, void 0, functi
                     localField: "id_order",
                     foreignField: "_id",
                     as: "order",
-                },
-            },
-            {
-                $match: {
-                    id_user: new mongoose_1.default.Types.ObjectId(id),
                 },
             },
             {
@@ -152,7 +152,7 @@ const getReviewbyUserId = (req, res) => __awaiter(void 0, void 0, void 0, functi
 const createReview = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id_user, id_order, rating, kritik, saran } = req.body;
-        const newReview = Review.create({
+        Review.create({
             id_user: id_user,
             id_order: id_order,
             rating: rating,
