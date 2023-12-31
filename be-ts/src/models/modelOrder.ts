@@ -14,9 +14,9 @@ const orderSchema = new mongoose.Schema({
 			},
 			kategori: String,
 			harga: Number,
-			tanggal: Date,
 		},
 	],
+	tanggal: Date,
 	status: Boolean,
 });
 

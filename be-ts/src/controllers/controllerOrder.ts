@@ -26,6 +26,7 @@ const getAllOrders = async (req: Request, res: Response) => {
 					_id: 1,
 					status: 1,
 					details: 1,
+					tanggal: 1,
 					pets: 1,
 					user: {
 						$arrayElemAt: ["$user", 0],
@@ -71,6 +72,7 @@ const getOrderbyId = async (req: Request, res: Response) => {
 					_id: 1,
 					status: 1,
 					details: 1,
+					tanggal: 1,
 					pets: 1,
 					user: {
 						$arrayElemAt: ["$user", 0],
@@ -116,6 +118,7 @@ const getOrderbyUserId = async (req: Request, res: Response) => {
 					_id: 1,
 					status: 1,
 					details: 1,
+					tanggal: 1,
 					pets: 1,
 					user: {
 						$arrayElemAt: ["$user", 0],
@@ -133,11 +136,11 @@ const getOrderbyUserId = async (req: Request, res: Response) => {
 
 const createOrder = async (req: Request, res: Response) => {
 	try {
-		const { id_user, details, total } = req.body;
+		const { id_user, details, tanggal } = req.body;
 		Order.create({
 			id_user: id_user,
 			details: details,
-			total: total,
+			tanggal: tanggal,
 			status: false,
 		});
 		return res.status(200).json({ message: "Order created" });
@@ -149,13 +152,14 @@ const createOrder = async (req: Request, res: Response) => {
 
 const updateOrder = async (req: Request, res: Response) => {
 	try {
-		const { details } = req.body;
+		const { details, tanggal } = req.body;
 		const { id } = req.params;
 
 		const newOrder = await Order.findByIdAndUpdate(
 			id,
 			{
 				details: details,
+				tanggal: tanggal,
 			},
 			{ new: true },
 		);
