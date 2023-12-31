@@ -104,7 +104,18 @@ const bannedUser = async (req: Request, res: Response) => {
 		console.log(error);
 		return res.status(500).json({ message: "Something went wrong" });
 	}
-}
+};
+
+const unbannedUser = async (req: Request, res: Response) => {
+	try {
+		const { id } = req.params;
+		await User.findByIdAndUpdate(id, { status: "active" });
+		return res.status(200).json({ message: "User unbanned" });
+	} catch (error) {
+		console.log(error);
+		return res.status(500).json({ message: "Something went wrong" });
+	}
+};
 
 const updateUser = async (req: any, res: Response) => {
 	try {
@@ -205,6 +216,7 @@ module.exports = {
 	createToken,
 	verifyUser,
 	bannedUser,
+	unbannedUser,
 	updateUser,
 	deleteUser,
 };

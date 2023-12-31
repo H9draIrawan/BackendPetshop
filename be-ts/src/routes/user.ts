@@ -24,6 +24,7 @@ router.post("/register", controller.registerUser);
 router.post("/token", controller.createToken);
 router.post("/verify", controller.verifyUser);
 router.put("/banned/:id", controller.bannedUser);
+router.put("/unbanned/:id", controller.unbannedUser);
 router.put("/:id", upload.single("profile"), controller.updateUser);
 router.delete("/:id", controller.deleteUser);
 

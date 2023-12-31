@@ -108,6 +108,17 @@ const bannedUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         return res.status(500).json({ message: "Something went wrong" });
     }
 });
+const unbannedUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        yield User.findByIdAndUpdate(id, { status: "active" });
+        return res.status(200).json({ message: "User unbanned" });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Something went wrong" });
+    }
+});
 const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { nama, username, email, password, alamat, kota, no_hp } = req.body;
@@ -193,6 +204,7 @@ module.exports = {
     createToken,
     verifyUser,
     bannedUser,
+    unbannedUser,
     updateUser,
     deleteUser,
 };
