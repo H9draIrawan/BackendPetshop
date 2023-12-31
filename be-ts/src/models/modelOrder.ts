@@ -12,7 +12,7 @@ const orderSchema = new mongoose.Schema({
 				type: mongoose.Schema.Types.ObjectId,
 				ref: "pets",
 			},
-			kategori: String,
+			kategori: [String],
 			harga: Number,
 		},
 	],
