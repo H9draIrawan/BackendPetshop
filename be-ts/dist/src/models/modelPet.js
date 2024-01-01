@@ -14,6 +14,10 @@ const petSchema = new mongoose_1.default.Schema({
     umur: String,
     jenis: String,
     ras: String,
+    status: {
+        type: Boolean,
+        default: true,
+    },
 });
 const Pet = mongoose_1.default.model("Pet", petSchema, "pets");
 module.exports = Pet;

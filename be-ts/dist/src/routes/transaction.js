@@ -11,6 +11,6 @@ router.get("/:id", controller.getTransactionbyId);
 router.get("/user/:id", controller.getTransactionbyUserId);
 router.post("/", controller.createTransaction);
 router.post("/webhook", controller.updateTransaction);
-router.put("/:id", controller.cancelTransaction);
+router.put("/cancel/:id", controller.cancelTransaction);
 router.delete("/:id", controller.deleteTransaction);
 module.exports = router;

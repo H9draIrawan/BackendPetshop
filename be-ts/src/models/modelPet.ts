@@ -10,6 +10,10 @@ const petSchema = new mongoose.Schema({
 	umur: String,
 	jenis: String,
 	ras: String,
+	status: {
+		type: Boolean,
+		default: true,
+	},
 });
 
 const Pet = mongoose.model("Pet", petSchema, "pets");

@@ -69,8 +69,7 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             profile: "default.png",
             alamat: alamat,
             kota: kota,
-            no_hp: no_hp,
-            status: "nonactive",
+            no_hp: no_hp
         });
         const token = jwt.sign({
             email: email,

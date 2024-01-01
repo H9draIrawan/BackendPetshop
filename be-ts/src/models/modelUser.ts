@@ -9,7 +9,10 @@ const userSchema = new mongoose.Schema({
 	alamat: String,
 	kota: String,
 	no_hp: String,
-	status: String,
+	status: {
+		type: String,
+		default: "nonactive",
+	},
 });
 
 const User = mongoose.model("User", userSchema, "users");

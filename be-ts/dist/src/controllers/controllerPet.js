@@ -33,6 +33,7 @@ const getAllPets = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                     umur: 1,
                     jenis: 1,
                     ras: 1,
+                    status: 1,
                     user: {
                         $arrayElemAt: ["$user", 0],
                     },
@@ -71,6 +72,7 @@ const getPetbyId = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                     umur: 1,
                     jenis: 1,
                     ras: 1,
+                    status: 1,
                     user: {
                         $arrayElemAt: ["$user", 0],
                     },
@@ -109,6 +111,7 @@ const getPetbyUserId = (req, res) => __awaiter(void 0, void 0, void 0, function*
                     umur: 1,
                     jenis: 1,
                     ras: 1,
+                    status: 1,
                     user: {
                         $arrayElemAt: ["$user", 0],
                     },
@@ -171,6 +174,28 @@ const updateProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         return res.status(500).json({ message: "Something went wrong" });
     }
 });
+const bannedPet = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        yield Pet.findByIdAndUpdate(id, { status: false });
+        return res.status(200).json({ message: "Pet banned" });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Something went wrong" });
+    }
+});
+const unbannedPet = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        yield Pet.findByIdAndUpdate(id, { status: true });
+        return res.status(200).json({ message: "Pet unbanned" });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Something went wrong" });
+    }
+});
 const deletePet = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
@@ -189,5 +214,7 @@ module.exports = {
     createPet,
     updatePet,
     updateProfile,
+    bannedPet,
+    unbannedPet,
     deletePet,
 };

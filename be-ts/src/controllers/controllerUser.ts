@@ -61,8 +61,7 @@ const registerUser = async (req: Request, res: Response) => {
 			profile: "default.png",
 			alamat: alamat,
 			kota: kota,
-			no_hp: no_hp,
-			status: "nonactive",
+			no_hp: no_hp
 		});
 
 		const token = jwt.sign(

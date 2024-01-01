@@ -152,8 +152,7 @@ const createOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         Order.create({
             id_user: id_user,
             details: details,
-            tanggal: tanggal,
-            status: false,
+            tanggal: tanggal
         });
         return res.status(200).json({ message: "Order created" });
     }

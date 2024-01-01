@@ -21,7 +21,10 @@ const orderSchema = new mongoose_1.default.Schema({
         },
     ],
     tanggal: Date,
-    status: Boolean,
+    status: {
+        type: Boolean,
+        default: false,
+    },
 });
 const Order = mongoose_1.default.model("Order", orderSchema, "orders");
 module.exports = Order;

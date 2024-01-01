@@ -13,7 +13,10 @@ const userSchema = new mongoose_1.default.Schema({
     alamat: String,
     kota: String,
     no_hp: String,
-    status: String,
+    status: {
+        type: String,
+        default: "nonactive",
+    },
 });
 const User = mongoose_1.default.model("User", userSchema, "users");
 module.exports = User;

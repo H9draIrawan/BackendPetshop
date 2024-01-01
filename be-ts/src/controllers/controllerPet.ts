@@ -21,6 +21,7 @@ const getAllPets = async (req: Request, res: Response) => {
 					umur: 1,
 					jenis: 1,
 					ras: 1,
+					status: 1,
 					user: {
 						$arrayElemAt: ["$user", 0],
 					},
@@ -59,6 +60,7 @@ const getPetbyId = async (req: Request, res: Response) => {
 					umur: 1,
 					jenis: 1,
 					ras: 1,
+					status: 1,
 					user: {
 						$arrayElemAt: ["$user", 0],
 					},
@@ -97,6 +99,7 @@ const getPetbyUserId = async (req: Request, res: Response) => {
 					umur: 1,
 					jenis: 1,
 					ras: 1,
+					status: 1,
 					user: {
 						$arrayElemAt: ["$user", 0],
 					},
@@ -167,7 +170,29 @@ const updateProfile = async (req: any, res: Response) => {
 		console.log(error);
 		return res.status(500).json({ message: "Something went wrong" });
 	}
-}
+};
+
+const bannedPet = async (req: Request, res: Response) => {
+	try {
+		const { id } = req.params;
+		await Pet.findByIdAndUpdate(id, { status: false });
+		return res.status(200).json({ message: "Pet banned" });
+	} catch (error) {
+		console.log(error);
+		return res.status(500).json({ message: "Something went wrong" });
+	}
+};
+
+const unbannedPet = async (req: Request, res: Response) => {
+	try {
+		const { id } = req.params;
+		await Pet.findByIdAndUpdate(id, { status: true });
+		return res.status(200).json({ message: "Pet unbanned" });
+	} catch (error) {
+		console.log(error);
+		return res.status(500).json({ message: "Something went wrong" });
+	}
+};
 
 const deletePet = async (req: Request, res: Response) => {
 	try {
@@ -187,5 +212,7 @@ module.exports = {
 	createPet,
 	updatePet,
 	updateProfile,
+	bannedPet,
+	unbannedPet,
 	deletePet,
 };
