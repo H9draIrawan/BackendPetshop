@@ -37,9 +37,9 @@ const getUserbyId = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 });
 const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { email, username, password } = req.body;
+        const { email, password } = req.body;
         const user = yield User.findOne({
-            $or: [{ email: email }, { username: username }],
+            email: email,
         });
         if (!user) {
             return res.status(404).json({ message: "User not found" });
@@ -51,7 +51,7 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (user.status == "nonactive") {
             return res.status(400).json({ message: "User not verified" });
         }
-        return res.status(200).json({ message: "Login successful" });
+        return res.status(200).json({ message: "Login successful", user: user });
     }
     catch (error) {
         console.log(error);
@@ -69,14 +69,8 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             profile: "default.png",
             alamat: alamat,
             kota: kota,
-            no_hp: no_hp
+            no_hp: no_hp,
         });
-        const token = jwt.sign({
-            email: email,
-        }, process.env.SECRET_KEY, {
-            expiresIn: 120,
-        });
-        sendEmail(email, "Verify your account", token);
         return res.status(200).json({ message: "User created" });
     }
     catch (error) {
@@ -89,6 +83,7 @@ const verifyUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     try {
         const user = jwt.verify(token, process.env.SECRET_KEY);
         yield User.findOneAndUpdate({ email: user.email }, { status: "active" });
+        sendEmail(user.email, "Account verified", "Your account has been verified");
         return res.status(200).json({ message: "User verified" });
     }
     catch (error) {
@@ -99,7 +94,8 @@ const verifyUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 const bannedUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        yield User.findByIdAndUpdate(id, { status: "banned" });
+        const user = yield User.findByIdAndUpdate(id, { status: "banned" });
+        sendEmail(user.email, "Account banned", "Your account has been banned");
         return res.status(200).json({ message: "User banned" });
     }
     catch (error) {
@@ -110,7 +106,8 @@ const bannedUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 const unbannedUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        yield User.findByIdAndUpdate(id, { status: "active" });
+        const user = yield User.findByIdAndUpdate(id, { status: "active" });
+        sendEmail(user.email, "Account unbanned", "Your account has been unbanned");
         return res.status(200).json({ message: "User unbanned" });
     }
     catch (error) {
@@ -158,6 +155,7 @@ const updateProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         const newUser = yield User.findByIdAndUpdate(id, {
             profile: profile,
         }, { new: true });
+        sendEmail(newUser.email, "Profile updated", "Your profile has been updated");
         return res.status(200).json(newUser);
     }
     catch (error) {
@@ -168,7 +166,8 @@ const updateProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        yield User.findByIdAndDelete(id);
+        const user = yield User.findByIdAndDelete(id);
+        sendEmail(user.email, "Account deleted", "Your account has been deleted");
         return res.status(200).json({ message: "User deleted" });
     }
     catch (error) {
@@ -181,7 +180,7 @@ const createToken = (req, res) => {
     const token = jwt.sign({
         email: email,
     }, process.env.SECRET_KEY, {
-        expiresIn: 120,
+        expiresIn: 180,
     });
     sendEmail(req.body.email, "Verify your account", token);
     return res.status(200).json({ message: "Token created" });

@@ -29,9 +29,9 @@ const getUserbyId = async (req: Request, res: Response) => {
 
 const loginUser = async (req: Request, res: Response) => {
 	try {
-		const { email, username, password } = req.body;
+		const { email, password } = req.body;
 		const user = await User.findOne({
-			$or: [{ email: email }, { username: username }],
+			email: email,
 		});
 		if (!user) {
 			return res.status(404).json({ message: "User not found" });
@@ -43,7 +43,7 @@ const loginUser = async (req: Request, res: Response) => {
 		if (user.status == "nonactive") {
 			return res.status(400).json({ message: "User not verified" });
 		}
-		return res.status(200).json({ message: "Login successful" });
+		return res.status(200).json({ message: "Login successful", user: user });
 	} catch (error) {
 		console.log(error);
 		return res.status(500).json({ message: "Something went wrong" });
@@ -61,20 +61,8 @@ const registerUser = async (req: Request, res: Response) => {
 			profile: "default.png",
 			alamat: alamat,
 			kota: kota,
-			no_hp: no_hp
+			no_hp: no_hp,
 		});
-
-		const token = jwt.sign(
-			{
-				email: email,
-			},
-			process.env.SECRET_KEY,
-			{
-				expiresIn: 120,
-			},
-		);
-
-		sendEmail(email, "Verify your account", token);
 		return res.status(200).json({ message: "User created" });
 	} catch (error) {
 		console.log(error);
@@ -87,6 +75,7 @@ const verifyUser = async (req: Request, res: Response) => {
 	try {
 		const user = jwt.verify(token, process.env.SECRET_KEY);
 		await User.findOneAndUpdate({ email: user.email }, { status: "active" });
+		sendEmail(user.email, "Account verified", "Your account has been verified");
 		return res.status(200).json({ message: "User verified" });
 	} catch (error) {
 		console.log(error);
@@ -97,7 +86,8 @@ const verifyUser = async (req: Request, res: Response) => {
 const bannedUser = async (req: Request, res: Response) => {
 	try {
 		const { id } = req.params;
-		await User.findByIdAndUpdate(id, { status: "banned" });
+		const user = await User.findByIdAndUpdate(id, { status: "banned" });
+		sendEmail(user.email, "Account banned", "Your account has been banned");
 		return res.status(200).json({ message: "User banned" });
 	} catch (error) {
 		console.log(error);
@@ -108,7 +98,8 @@ const bannedUser = async (req: Request, res: Response) => {
 const unbannedUser = async (req: Request, res: Response) => {
 	try {
 		const { id } = req.params;
-		await User.findByIdAndUpdate(id, { status: "active" });
+		const user = await User.findByIdAndUpdate(id, { status: "active" });
+		sendEmail(user.email, "Account unbanned", "Your account has been unbanned");
 		return res.status(200).json({ message: "User unbanned" });
 	} catch (error) {
 		console.log(error);
@@ -167,6 +158,11 @@ const updateProfile = async (req: any, res: Response) => {
 			},
 			{ new: true },
 		);
+		sendEmail(
+			newUser.email,
+			"Profile updated",
+			"Your profile has been updated",
+		);
 		return res.status(200).json(newUser);
 	} catch (error) {
 		console.log(error);
@@ -177,7 +173,8 @@ const updateProfile = async (req: any, res: Response) => {
 const deleteUser = async (req: Request, res: Response) => {
 	try {
 		const { id } = req.params;
-		await User.findByIdAndDelete(id);
+		const user = await User.findByIdAndDelete(id);
+		sendEmail(user.email, "Account deleted", "Your account has been deleted");
 		return res.status(200).json({ message: "User deleted" });
 	} catch (error) {
 		console.log(error);
@@ -193,7 +190,7 @@ const createToken = (req: Request, res: Response) => {
 		},
 		process.env.SECRET_KEY,
 		{
-			expiresIn: 120,
+			expiresIn: 180,
 		},
 	);
 	sendEmail(req.body.email, "Verify your account", token);
