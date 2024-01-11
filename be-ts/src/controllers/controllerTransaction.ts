@@ -6,6 +6,7 @@ import { buffer } from "stream/consumers";
 const dotenv = require("dotenv").config();
 const API_KEY = Buffer.from(`${process.env.API_KEY}:`).toString("base64");
 const Transaction = require("../models/modelTransaction");
+const Order = require("../models/modelOrder");
 
 const getAllTransactions = async (req: Request, res: Response) => {
 	try {
@@ -201,6 +202,8 @@ const updateTransaction = async (req: Request, res: Response) => {
 			status: status,
 			updated: updated,
 		});
+		const transaction = await Transaction.findOne({ id_invoice: id });
+		await Order.find({ _id: transaction.id_order }).updateOne({ status: true });
 		return res.status(200).json({ message: "Transaction updated" });
 	} catch (error) {
 		console.log(error);
