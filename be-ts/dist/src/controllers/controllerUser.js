@@ -180,7 +180,7 @@ const createToken = (req, res) => {
     const token = jwt.sign({
         email: email,
     }, process.env.SECRET_KEY, {
-        expiresIn: 180,
+        expiresIn: 60,
     });
     sendEmail(req.body.email, "Verify your account", token);
     return res.status(200).json({ message: "Token created" });

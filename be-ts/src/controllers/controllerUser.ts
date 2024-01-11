@@ -190,7 +190,7 @@ const createToken = (req: Request, res: Response) => {
 		},
 		process.env.SECRET_KEY,
 		{
-			expiresIn: 180,
+			expiresIn: 60,
 		},
 	);
 	sendEmail(req.body.email, "Verify your account", token);
