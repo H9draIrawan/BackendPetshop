@@ -15,7 +15,7 @@ app.use("/static", express.static("assets"));
 app.use("/api", routes);
 
 app.listen(port, () => {
-	mongoose.connect("mongodb://localhost:27017/PetShop").then(() => {
+	mongoose.connect("mongodb://127.0.0.1/PetShop").then(() => {
 		console.log("Database connected");
 		console.log(`[server]: Server is running at http://localhost:${port}`);
 	});

@@ -16,7 +16,7 @@ app.use(cors({ origin: "http://localhost:5173", optionsSuccessStatus: 200 }));
 app.use("/static", express_1.default.static("assets"));
 app.use("/api", index_1.default);
 app.listen(port, () => {
-    mongoose_1.default.connect("mongodb://localhost:27017/PetShop").then(() => {
+    mongoose_1.default.connect("mongodb://127.0.0.1/PetShop").then(() => {
         console.log("Database connected");
         console.log(`[server]: Server is running at http://localhost:${port}`);
     });
