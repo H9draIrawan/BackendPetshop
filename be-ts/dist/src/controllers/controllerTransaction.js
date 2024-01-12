@@ -17,6 +17,7 @@ const axios_1 = __importDefault(require("axios"));
 const dotenv = require("dotenv").config();
 const API_KEY = Buffer.from(`${process.env.API_KEY}:`).toString("base64");
 const Transaction = require("../models/modelTransaction");
+const Order = require("../models/modelOrder");
 const getAllTransactions = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const transactions = yield Transaction.aggregate([
@@ -206,6 +207,8 @@ const updateTransaction = (req, res) => __awaiter(void 0, void 0, void 0, functi
             status: status,
             updated: updated,
         });
+        const transaction = yield Transaction.findOne({ id_invoice: id });
+        yield Order.find({ _id: transaction.id_order }).updateOne({ status: true });
         return res.status(200).json({ message: "Transaction updated" });
     }
     catch (error) {

@@ -28,6 +28,7 @@ const getAllOrders = async (req: Request, res: Response) => {
 					details: 1,
 					tanggal: 1,
 					pets: 1,
+					review: 1,
 					user: {
 						$arrayElemAt: ["$user", 0],
 					},
@@ -74,6 +75,7 @@ const getOrderbyId = async (req: Request, res: Response) => {
 					details: 1,
 					tanggal: 1,
 					pets: 1,
+					review: 1,
 					user: {
 						$arrayElemAt: ["$user", 0],
 					},
@@ -120,6 +122,7 @@ const getOrderbyUserId = async (req: Request, res: Response) => {
 					details: 1,
 					tanggal: 1,
 					pets: 1,
+					review : 1,
 					user: {
 						$arrayElemAt: ["$user", 0],
 					},
@@ -140,7 +143,7 @@ const createOrder = async (req: Request, res: Response) => {
 		Order.create({
 			id_user: id_user,
 			details: details,
-			tanggal: tanggal
+			tanggal: tanggal,
 		});
 		return res.status(200).json({ message: "Order created" });
 	} catch (error) {
@@ -169,6 +172,24 @@ const updateOrder = async (req: Request, res: Response) => {
 		return res.status(500).json({ message: "Something went wrong" });
 	}
 };
+
+const reviewOrder = async (req: Request, res: Response) => {
+	try {
+		const { id } = req.params;
+		const newOrder = await Order.findByIdAndUpdate(
+			id,
+			{
+				review: true,
+			},
+			{ new: true },
+		);
+
+		return res.status(200).json(newOrder);
+	} catch (error) {
+		console.log(error);
+		return res.status(500).json({ message: "Something went wrong" });
+	}
+}
 
 const finishOrder = async (req: Request, res: Response) => {
 	try {
@@ -205,6 +226,7 @@ module.exports = {
 	getOrderbyUserId,
 	createOrder,
 	updateOrder,
+	reviewOrder,
 	finishOrder,
 	deleteOrder,
 };

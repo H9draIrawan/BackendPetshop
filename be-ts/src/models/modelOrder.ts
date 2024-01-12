@@ -21,6 +21,10 @@ const orderSchema = new mongoose.Schema({
 		type: Boolean,
 		default: false,
 	},
+	review: {
+		type: Boolean,
+		default: false,
+	},
 });
 
 const Order = mongoose.model("Order", orderSchema, "orders");

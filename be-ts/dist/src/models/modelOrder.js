@@ -25,6 +25,10 @@ const orderSchema = new mongoose_1.default.Schema({
         type: Boolean,
         default: false,
     },
+    review: {
+        type: Boolean,
+        default: false,
+    },
 });
 const Order = mongoose_1.default.model("Order", orderSchema, "orders");
 module.exports = Order;
